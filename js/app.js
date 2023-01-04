@@ -13,13 +13,6 @@
             document.documentElement.classList.add(className);
         }));
     }
-    function addLoadedClass() {
-        window.addEventListener("load", (function() {
-            setTimeout((function() {
-                document.documentElement.classList.add("loaded");
-            }), 3e3);
-        }));
-    }
     function ssr_window_esm_isObject(obj) {
         return null !== obj && "object" === typeof obj && "constructor" in obj && obj.constructor === Object;
     }
@@ -2598,7 +2591,7 @@
         images: core_images
     };
     const extendedDefaults = {};
-    class core_Swiper {
+    class Swiper {
         constructor(...args) {
             let el;
             let params;
@@ -2612,7 +2605,7 @@
                     const newParams = utils_extend({}, params, {
                         el: containerEl
                     });
-                    swipers.push(new core_Swiper(newParams));
+                    swipers.push(new Swiper(newParams));
                 }));
                 return swipers;
             }
@@ -2948,26 +2941,26 @@
             return defaults;
         }
         static installModule(mod) {
-            if (!core_Swiper.prototype.__modules__) core_Swiper.prototype.__modules__ = [];
-            const modules = core_Swiper.prototype.__modules__;
+            if (!Swiper.prototype.__modules__) Swiper.prototype.__modules__ = [];
+            const modules = Swiper.prototype.__modules__;
             if ("function" === typeof mod && modules.indexOf(mod) < 0) modules.push(mod);
         }
         static use(module) {
             if (Array.isArray(module)) {
-                module.forEach((m => core_Swiper.installModule(m)));
-                return core_Swiper;
+                module.forEach((m => Swiper.installModule(m)));
+                return Swiper;
             }
-            core_Swiper.installModule(module);
-            return core_Swiper;
+            Swiper.installModule(module);
+            return Swiper;
         }
     }
     Object.keys(prototypes).forEach((prototypeGroup => {
         Object.keys(prototypes[prototypeGroup]).forEach((protoMethod => {
-            core_Swiper.prototype[protoMethod] = prototypes[prototypeGroup][protoMethod];
+            Swiper.prototype[protoMethod] = prototypes[prototypeGroup][protoMethod];
         }));
     }));
-    core_Swiper.use([ Resize, Observer ]);
-    const core = core_Swiper;
+    Swiper.use([ Resize, Observer ]);
+    const core = Swiper;
     function Mousewheel({swiper, extendParams, on, emit}) {
         const window = ssr_window_esm_getWindow();
         extendParams({
@@ -3659,8 +3652,7 @@
                         slidesPerView: 2.5,
                         spaceBetween: 30
                     }
-                },
-                on: {}
+                }
             });
             let titlesSlider = new core(".titles", {
                 modules: [ Navigation, Mousewheel, freeMode, Controller ],
@@ -3679,14 +3671,7 @@
                     momentumVelocityRatio: .5,
                     sticky: true
                 },
-                centeredSlides: true,
-                mousewheel: {
-                    enabled: true,
-                    sensitivity: 3.5,
-                    thresholdDelta: 10,
-                    eventsTarget: ".page"
-                },
-                on: {}
+                centeredSlides: true
             });
             mainSlider.on("slideChange", (() => {
                 let currentIndexSlide = mainSlider.realIndex;
@@ -3706,7 +3691,17 @@
             }));
         }
     }), 0);
+    let num = 0;
+    const loadNum = document.querySelector("[data-load]");
+    function loadPercent() {
+        let lengthImg = document.images.length;
+        setTimeout((() => {
+            loadNum.textContent = Math.ceil(num / lengthImg * 100);
+            num += .1;
+            if (num <= lengthImg) loadPercent(document.images[num]); else document.documentElement.classList.add("loaded");
+        }), 30);
+    }
+    loadPercent();
     window["FLS"] = true;
     isWebp();
-    addLoadedClass();
 })();
