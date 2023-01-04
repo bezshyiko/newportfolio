@@ -297,11 +297,10 @@ body::after {
 
 .page__title {
   text-transform: uppercase;
-  font-size: 3rem;
   text-align: center;
   width: 100%;
   font-weight: 200;
-  margin-bottom: 1.875rem;
+  padding-bottom: 1.875rem;
   letter-spacing: 1em;
   opacity: 0;
 }
@@ -799,6 +798,10 @@ body::after {
 }
 
 @media (min-width: 75em) {
+  .page__title {
+    font-size: 3rem;
+  }
+
   .preloader__text {
     font-size: 3rem;
   }
@@ -813,6 +816,10 @@ body::after {
 }
 
 @media (max-width: 20em) {
+  .page__title {
+    font-size: 1.875rem;
+  }
+
   .preloader__text {
     font-size: 1.875rem;
   }
@@ -840,6 +847,18 @@ body::after {
 }
 
 @media (min-width: 20em) and (max-width: 75em) {
+@supports (font-size: clamp( 1.875rem , 1.4659090909rem  +  2.0454545455vw , 3rem )) {
+    .page__title {
+      font-size: clamp( 1.875rem , 1.4659090909rem  +  2.0454545455vw , 3rem );
+    }
+}
+
+@supports not (font-size: clamp( 1.875rem , 1.4659090909rem  +  2.0454545455vw , 3rem )) {
+    .page__title {
+      font-size: calc(1.875rem + 1.125 * (100vw - 20rem) / 55);
+    }
+}
+
 @supports (font-size: clamp( 1.875rem , 1.4659090909rem  +  2.0454545455vw , 3rem )) {
     .preloader__text {
       font-size: clamp( 1.875rem , 1.4659090909rem  +  2.0454545455vw , 3rem );
