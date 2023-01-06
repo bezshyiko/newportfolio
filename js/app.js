@@ -3717,7 +3717,7 @@
             count += .1;
             setTimeout((() => {
                 if (count <= lengthImg) addCount(); else document.documentElement.classList.add("loaded");
-            }), 30);
+            }), 50);
         }
         addCount();
     }

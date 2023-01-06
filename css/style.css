@@ -559,8 +559,8 @@ body::after {
   -webkit-transform: translateY(5.625rem);
       -ms-transform: translateY(5.625rem);
           transform: translateY(5.625rem);
-  -webkit-animation: transformText 1s ease-in-out 1s forwards;
-          animation: transformText 1s ease-in-out 1s forwards;
+  -webkit-animation: transformText 1s ease-in-out 0.5 forwards;
+          animation: transformText 1s ease-in-out 0.5 forwards;
 }
 
 .loaded .preloader__text {
