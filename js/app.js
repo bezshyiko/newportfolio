@@ -13,6 +13,26 @@
             document.documentElement.classList.add(className);
         }));
     }
+    let isMobile = {
+        Android: function() {
+            return navigator.userAgent.match(/Android/i);
+        },
+        BlackBerry: function() {
+            return navigator.userAgent.match(/BlackBerry/i);
+        },
+        iOS: function() {
+            return navigator.userAgent.match(/iPhone|iPad|iPod/i);
+        },
+        Opera: function() {
+            return navigator.userAgent.match(/Opera Mini/i);
+        },
+        Windows: function() {
+            return navigator.userAgent.match(/IEMobile/i);
+        },
+        any: function() {
+            return isMobile.Android() || isMobile.BlackBerry() || isMobile.iOS() || isMobile.Opera() || isMobile.Windows();
+        }
+    };
     function ssr_window_esm_isObject(obj) {
         return null !== obj && "object" === typeof obj && "constructor" in obj && obj.constructor === Object;
     }
@@ -3611,7 +3631,6 @@
                 observer: true,
                 observeParents: true,
                 slidesPerView: 2.5,
-                spaceBetween: 40,
                 autoHeight: false,
                 freeMode: {
                     enabled: true,
@@ -3691,17 +3710,51 @@
             }));
         }
     }), 0);
-    let num = 0;
-    const loadNum = document.querySelector("[data-load]");
     function loadPercent() {
-        let lengthImg = document.images.length;
-        setTimeout((() => {
-            loadNum.textContent = Math.ceil(num / lengthImg * 100);
-            num += .1;
-            if (num <= lengthImg) loadPercent(document.images[num]); else document.documentElement.classList.add("loaded");
-        }), 30);
+        let count = 0, loadNumber = document.querySelector("[data-load]"), lengthImg = document.images.length;
+        function addCount() {
+            loadNumber.textContent = Math.ceil(count / lengthImg * 100);
+            count += .1;
+            setTimeout((() => {
+                if (count <= lengthImg) addCount(); else document.documentElement.classList.add("loaded");
+            }), 30);
+        }
+        addCount();
+    }
+    function customCursor() {
+        const wrapper = document.querySelector("[data-custom-cursor]") ? document.querySelector("[data-custom-cursor]") : document.documentElement;
+        let cursor;
+        if (wrapper && !isMobile.any()) {
+            cursor = document.createElement("div");
+            cursor.classList.add("fls-cursor");
+            cursor.style.opacity = 0;
+            cursor.insertAdjacentHTML("beforeend", `<span class="fls-cursor__pointer"></span>`);
+            cursor.insertAdjacentHTML("beforeend", `<span class="fls-cursor__shadow"></span>`);
+            wrapper.append(cursor);
+        }
+        const cursorPointer = document.querySelector(".fls-cursor__pointer");
+        const cursorPointerStyle = {
+            width: cursorPointer.offsetWidth,
+            height: cursorPointer.offsetHeight
+        };
+        let cursorShadow, cursorShadowStyle;
+        cursorShadow = document.querySelector(".fls-cursor__shadow");
+        cursorShadowStyle = {
+            width: cursorShadow.offsetWidth,
+            height: cursorShadow.offsetHeight
+        };
+        function actionCursor(e) {
+            let targetElement = e.target.offsetParent;
+            if (targetElement.classList.contains("slider__slide")) {
+                cursor.style.removeProperty("opacity");
+                cursorPointer ? cursorPointer.style.transform = `translate3d(${e.clientX - cursorPointerStyle.width / 2}px, ${e.clientY - cursorPointerStyle.height / 2}px, 0)` : null;
+                cursorShadow ? cursorShadow.style.transform = `translate3d(${e.clientX - cursorShadowStyle.width / 2}px, ${e.clientY - cursorShadowStyle.height / 2}px, 0)` : null;
+            } else if (!targetElement.classList.contains("slider__slide")) cursor.style.opacity = 0;
+        }
+        document.addEventListener("mousemove", actionCursor);
     }
     loadPercent();
+    customCursor();
     window["FLS"] = true;
     isWebp();
 })();
