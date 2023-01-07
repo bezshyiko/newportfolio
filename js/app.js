@@ -3714,10 +3714,10 @@
         let count = 0, loadNumber = document.querySelector("[data-load]"), lengthImg = document.images.length;
         function addCount() {
             loadNumber.textContent = Math.ceil(count / lengthImg * 100);
-            count += .1;
+            count += .01;
             setTimeout((() => {
                 if (count <= lengthImg) addCount(); else document.documentElement.classList.add("loaded");
-            }), 50);
+            }));
         }
         addCount();
     }
@@ -3745,7 +3745,7 @@
         };
         function actionCursor(e) {
             let targetElement = e.target.offsetParent;
-            if (targetElement.classList.contains("slider__slide")) {
+            if (targetElement) if (targetElement.classList.contains("slider__slide")) {
                 cursor.style.removeProperty("opacity");
                 cursorPointer ? cursorPointer.style.transform = `translate3d(${e.clientX - cursorPointerStyle.width / 2}px, ${e.clientY - cursorPointerStyle.height / 2}px, 0)` : null;
                 cursorShadow ? cursorShadow.style.transform = `translate3d(${e.clientX - cursorShadowStyle.width / 2}px, ${e.clientY - cursorShadowStyle.height / 2}px, 0)` : null;
